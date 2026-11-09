@@ -1,15 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import dotenv from 'dotenv';
-
-/**
- * Load environment variables before any test data is read.
- * dotenv never overrides a variable that is already set, so real environment
- * variables (e.g. CI secrets) win over the files, and the first file wins.
- * https://github.com/motdotla/dotenv
- */
-dotenv.config({ path: './env/.env.secrets', quiet: true }); // git-ignored credentials
-dotenv.config({ path: './env/.env.qa', quiet: true }); // committed, non-secret settings
+import './config/load-env'; // loads env/.env.secrets and env/.env.qa
 
 /**
  * See https://playwright.dev/docs/test-configuration.

@@ -1,3 +1,5 @@
+import '../config/load-env'
+
 // Credentials come from the environment (env/.env.secrets locally, GitHub
 // secrets in CI). The fallbacks below are Demoblaze's PUBLIC demo account and
 // exist for demo purposes only. In a real project never keep a default here:

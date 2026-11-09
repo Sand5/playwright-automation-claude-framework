@@ -1,8 +1,6 @@
 import * as winston from 'winston'
 import colors from '@colors/colors'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: './env/.env.qa', quiet: true })
+import '../config/load-env'
 
 // Define the custom format
 const myFormat = winston.format.printf(({ level, message }) => {

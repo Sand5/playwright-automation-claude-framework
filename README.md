@@ -41,7 +41,7 @@ npm install
 npx playwright install
 ```
 
-Run every command from the project root, because the logger loads `./env/.env.qa` relative to the working directory.
+Run Playwright commands from the project root, where it finds `playwright.config.ts`. Env files are loaded by [`config/load-env.ts`](config/load-env.ts) using paths relative to that file, so they load correctly even if you point at the config from elsewhere (`-c`).
 
 ## Running tests
 
@@ -111,6 +111,7 @@ Then open `review.md` and press `Cmd+Shift+V` (`Ctrl+Shift+V` on Windows/Linux),
 ├── .claude/skills/            # Claude Code project skills (verify-test-outcomes)
 ├── .github/workflows/ci.yml   # GitHub Actions: QA gate, then browser matrix
 ├── env/.env.qa                # Environment variables (LOG_LEVEL)
+├── config/load-env.ts         # Loads env/.env.secrets and env/.env.qa (one place)
 ├── logger/logger.ts           # Shared winston logger
 ├── pages/                     # Page objects (<name>.page.ts)
 │   ├── base.page.ts           #   Abstract BasePage with navigate()
