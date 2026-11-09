@@ -96,6 +96,14 @@ claude -p "/verify-test-outcomes"
 
 or use the npm shortcut, `npm run review:tests`. Inside an interactive `claude` session you can also type `/verify-test-outcomes`. It reports first and only changes code if you ask. The tests themselves run without Claude Code, and `review:tests` is not part of `qa:check` or CI.
 
+To read the report in a nicely rendered view, save it to a file and open it in the VS Code Markdown preview:
+
+```bash
+npm run review:tests --silent > review.md
+```
+
+Then open `review.md` and press `Cmd+Shift+V` (`Ctrl+Shift+V` on Windows/Linux), or `Cmd+K` then `V` for source and preview side by side. `--silent` leaves out npm's own header lines. Don't commit the generated `review.md`.
+
 ## Project structure
 
 ```text
