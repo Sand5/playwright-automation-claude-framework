@@ -33,4 +33,24 @@ test.describe('Demoblaze login', () => {
       await expect(loginPage.logoutNavLink).toBeVisible()
     },
   )
+
+  test(
+    'shows an error when the password is wrong',
+    { tag: ['@login', '@negative'] },
+    async ({ page }) => {
+      await loginPage.openLoginForm()
+      await expect(loginPage.loginModal).toBeVisible()
+
+      // The site reports the failure with a browser alert dialog
+      const dialogPromise = page.waitForEvent('dialog')
+      await loginPage.login(loginData.username, loginData.invalidPassword)
+      const dialog = await dialogPromise
+      expect(dialog.message()).toBe(loginData.wrongPasswordMessage)
+      await dialog.accept()
+
+      // And the user is not logged in
+      await expect(loginPage.welcomeUser).toBeHidden()
+      await expect(loginPage.logoutNavLink).toBeHidden()
+    },
+  )
 })

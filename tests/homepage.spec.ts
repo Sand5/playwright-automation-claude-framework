@@ -46,4 +46,20 @@ test.describe('Demoblaze homepage', () => {
 
     await expect(homePage.productTitles).toHaveText([...homeData.phoneProducts])
   })
+
+  test('filters the products when the Laptops category is selected', async () => {
+    await homePage.selectCategory('Laptops')
+
+    await expect(homePage.productTitles).toHaveText([
+      ...homeData.laptopProducts,
+    ])
+  })
+
+  test('filters the products when the Monitors category is selected', async () => {
+    await homePage.selectCategory('Monitors')
+
+    await expect(homePage.productTitles).toHaveText([
+      ...homeData.monitorProducts,
+    ])
+  })
 })

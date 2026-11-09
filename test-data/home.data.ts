@@ -10,4 +10,13 @@ export const homeData = {
     'Sony xperia z5',
     'HTC One M9',
   ],
+  laptopProducts: [
+    'Sony vaio i5',
+    'Sony vaio i7',
+    'MacBook air',
+    'Dell i7 8gb',
+    '2017 Dell 15.6 Inch',
+    'MacBook Pro',
+  ],
+  monitorProducts: ['Apple monitor 24', 'ASUS Full HD'],
 } as const
