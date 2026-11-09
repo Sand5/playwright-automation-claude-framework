@@ -36,12 +36,18 @@ Note the `afterEach` logout hook is cleanup, not an assertion target. Do not cou
 
 ## Output
 
-Give a table, one row per test:
+The report is often read as plain text in a terminal (`claude -p`), where wide Markdown tables wrap and become unreadable. Do **not** use a table. Use one short block per test, separated by a blank line, with each field on its own line:
 
-| Spec | Test | Outcome asserted | Verdict | Fix |
-| ---- | ---- | ---------------- | ------- | --- |
+```text
+homepage.spec.ts > displays the core homepage elements
+  Outcome:  title equals homeData.title; categories heading text matches
+  Verdict:  OK (presence test that also checks two concrete values)
+  Fix:      none
+```
 
+- Keep every line under about 100 characters; shorten rather than wrap.
 - **Verdict:** `OK` or `WEAK`, with the reason in one short phrase.
-- **Fix:** for each WEAK row, the specific assertion to add or change, using `test-data/` values.
+- **Fix:** for each WEAK test, the specific assertion to add or change, using `test-data/` values. Write `none` for OK tests.
+- After the blocks, list any non-blocking observations (e.g. cleanup hooks, coverage gaps) as short bullets under a `Notes` heading.
 
 Finish with a one-line summary (`N tests reviewed, M weak`). Offer to apply the fixes. If you apply them, run `npm run qa:check` and the affected tests afterwards.
