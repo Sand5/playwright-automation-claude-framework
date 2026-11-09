@@ -141,6 +141,20 @@ Then open `review.md` and press `Cmd+Shift+V` (`Ctrl+Shift+V` on Windows/Linux),
 - **Reports:** HTML report in `playwright-report/`, artifacts in `test-results/` (both git-ignored).
 - **Logging:** `LOG_LEVEL` is read from `env/.env.qa` (default `info`). A real environment variable overrides the file.
 
+### Credentials and secrets
+
+Login credentials are read from the environment in [`test-data/login-data.ts`](test-data/login-data.ts), so specs never contain them.
+
+| Where   | How                                                                                    |
+| ------- | -------------------------------------------------------------------------------------- |
+| Locally | Copy `env/.env.secrets.example` to `env/.env.secrets` (git-ignored) and set the values |
+| CI      | Add `TEST_USERNAME` and `TEST_PASSWORD` as GitHub repository secrets                   |
+| One-off | `TEST_USERNAME=... TEST_PASSWORD=... npx playwright test`                              |
+
+`env/.env.qa` is committed, so it holds only non-secret settings such as `LOG_LEVEL`. Real environment variables override the files.
+
+> **Demo-only fallback:** Demoblaze's public demo account (`test` / `test`) is used when `TEST_USERNAME` and `TEST_PASSWORD` are not set, so the repo runs out of the box. This is done for demo reasons only. In a real project there must be **no default credentials in code**: keep them in a secrets file or a secrets manager, and make the tests fail fast when they are missing.
+
 ## Continuous integration
 
 [`ci.yml`](.github/workflows/ci.yml) runs on pushes to `main`, pull requests and manual dispatch:

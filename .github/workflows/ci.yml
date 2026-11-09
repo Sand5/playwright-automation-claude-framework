@@ -44,6 +44,11 @@ jobs:
         run: npx playwright install --with-deps ${{ matrix.project }}
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }}
+        env:
+          # Optional: if the secrets are not set these are empty and the
+          # demo fallback in test-data/login-data.ts is used.
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
       - name: Upload HTML report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

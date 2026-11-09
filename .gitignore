@@ -7,6 +7,9 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
+# Credentials (never commit; copy env/.env.secrets.example to create it)
+env/.env.secrets
+
 # macOS
 .DS_Store
 
