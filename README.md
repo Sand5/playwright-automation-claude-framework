@@ -88,7 +88,13 @@ Run `npm run qa:check` before opening a pull request. Notable lint rules: no flo
 
 If you use [Claude Code](https://claude.com/claude-code), the repo includes a project skill, `verify-test-outcomes`, in [`.claude/skills/verify-test-outcomes/SKILL.md`](.claude/skills/verify-test-outcomes/SKILL.md). It reviews your specs and checks that each test asserts a meaningful outcome of what its title claims, not just that elements are present. It flags things like actions with no result check, presence-only assertions, assertions that cannot fail, and hardcoded expected values.
 
-Run it with `/verify-test-outcomes` or ask Claude Code to review test quality. It reports first and only changes code if you ask. The tests themselves run without Claude Code.
+Run it from the command line with:
+
+```bash
+claude -p "/verify-test-outcomes"
+```
+
+or use the npm shortcut, `npm run review:tests`. Inside an interactive `claude` session you can also type `/verify-test-outcomes`. It reports first and only changes code if you ask. The tests themselves run without Claude Code, and `review:tests` is not part of `qa:check` or CI.
 
 ## Project structure
 
