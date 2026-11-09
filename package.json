@@ -1,0 +1,40 @@
+{
+  "name": "playwright-automation-claude-framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:chrome:headed": "playwright test --project=chromium --headed",
+    "test:chrome:headless": "playwright test --project=chromium",
+    "test:webkit:headless": "playwright test --project=webkit",
+    "test:login": "playwright test tests/login.spec.ts --project=chromium",
+    "test:login:headed": "playwright test tests/login.spec.ts --project=chromium --headed",
+    "test:smoke": "playwright test --grep @smoke --project=chromium",
+    "test:smoke:all": "playwright test --grep @smoke",
+    "test:tag": "playwright test --project=chromium --grep",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit -p .",
+    "format:check": "prettier --check tests pages logger test-data",
+    "qa:check": "npm run typecheck && npm run lint && npm run format:check"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "eslint-plugin-playwright": "^2.12.2",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "dependencies": {
+    "@colors/colors": "^1.6.1",
+    "dotenv": "^18.0.9",
+    "winston": "^3.19.0"
+  }
+}
