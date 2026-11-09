@@ -84,10 +84,17 @@ LOG_LEVEL=debug npx playwright test
 
 Run `npm run qa:check` before opening a pull request. Notable lint rules: no floating promises, no `console` (use the logger), no `waitForTimeout`, `force` or `test.only`, and no `expect` inside page objects.
 
+### Claude Code skill: verify test outcomes
+
+If you use [Claude Code](https://claude.com/claude-code), the repo includes a project skill, `verify-test-outcomes`, in [`.claude/skills/verify-test-outcomes/SKILL.md`](.claude/skills/verify-test-outcomes/SKILL.md). It reviews your specs and checks that each test asserts a meaningful outcome of what its title claims, not just that elements are present. It flags things like actions with no result check, presence-only assertions, assertions that cannot fail, and hardcoded expected values.
+
+Run it with `/verify-test-outcomes` or ask Claude Code to review test quality. It reports first and only changes code if you ask. The tests themselves run without Claude Code.
+
 ## Project structure
 
 ```text
 .
+├── .claude/skills/            # Claude Code project skills (verify-test-outcomes)
 ├── .github/workflows/ci.yml   # GitHub Actions: QA gate, then browser matrix
 ├── env/.env.qa                # Environment variables (LOG_LEVEL)
 ├── logger/logger.ts           # Shared winston logger
