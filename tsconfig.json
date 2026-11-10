@@ -13,7 +13,8 @@
   "include": [
     "playwright.config.ts",
     "config/**/*.ts",
-    "tests/**/*.ts",
+    "step-definitions/**/*.ts",
+    "scripts/**/*.ts",
     "pages/**/*.ts",
     "logger/**/*.ts",
     "test-data/**/*.ts"

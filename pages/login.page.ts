@@ -41,7 +41,13 @@ export class LoginPage extends BasePage {
     logger.info(`Logging in as: ${username}`);
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
+    // The site answers a login attempt (right or wrong) with an API call and
+    // only then shows the welcome name or the alert, so wait for that call.
+    const loginResponse = this.page.waitForResponse((response) =>
+      response.url().includes('/login'),
+    );
     await this.submitButton.click();
+    await loginResponse;
   }
 
   async logout(): Promise<void> {

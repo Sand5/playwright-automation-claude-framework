@@ -20,3 +20,10 @@ export const homeData = {
   ],
   monitorProducts: ['Apple monitor 24', 'ASUS Full HD'],
 } as const;
+
+// Lookup used by the category steps: "Phones" -> homeData.phoneProducts, etc.
+export const productsByCategory = {
+  Phones: homeData.phoneProducts,
+  Laptops: homeData.laptopProducts,
+  Monitors: homeData.monitorProducts,
+} as const;

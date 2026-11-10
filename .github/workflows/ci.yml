@@ -39,6 +39,9 @@ jobs:
       fail-fast: false
       matrix:
         project: [chromium, firefox, webkit]
+    env:
+      # push/PR runs have no input, so they default to qa.
+      TEST_ENV: ${{ inputs.test_env || 'qa' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,11 +51,11 @@ jobs:
       - run: npm ci
       - name: Install browser and system dependencies
         run: npx playwright install --with-deps ${{ matrix.project }}
+      - name: Generate specs from feature files
+        run: npm run bddgen
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }}
         env:
-          # push/PR runs have no input, so they default to qa.
-          TEST_ENV: ${{ inputs.test_env || 'qa' }}
           # Optional: if the secrets are not set these are empty and the
           # demo fallback in test-data/login-data.ts is used.
           TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
@@ -63,4 +66,16 @@ jobs:
         with:
           name: playwright-report-${{ matrix.project }}
           path: playwright-report/
+          retention-days: 14
+      - name: Generate Cucumber HTML report
+        if: ${{ !cancelled() }}
+        run: npm run report:cucumber
+        env:
+          REPORT_PROJECT: ${{ matrix.project }}
+      - name: Upload Cucumber HTML report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report-${{ matrix.project }}
+          path: cucumber-report/html/
           retention-days: 14
