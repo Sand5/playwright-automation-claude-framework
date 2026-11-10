@@ -65,6 +65,12 @@ export class HomePage extends BasePage {
 
   async selectCategory(name: keyof HomePage['categoryLinks']): Promise<void> {
     logger.info(`Selecting category: ${name}`);
+    // The grid is filled from the bycat API call, so wait for it; otherwise
+    // the old product list can still be on screen when assertions start.
+    const categoryLoaded = this.page.waitForResponse((response) =>
+      response.url().includes('/bycat'),
+    );
     await this.categoryLinks[name].click();
+    await categoryLoaded;
   }
 }
