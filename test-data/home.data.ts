@@ -19,4 +19,4 @@ export const homeData = {
     'MacBook Pro',
   ],
   monitorProducts: ['Apple monitor 24', 'ASUS Full HD'],
-} as const
+} as const;
