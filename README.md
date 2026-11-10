@@ -18,8 +18,9 @@ End-to-end UI test framework for the [Demoblaze](https://demoblaze.com) demo sto
 - Tagged tests (`@smoke`, `@login`) for targeted runs
 - Cross-browser: Chromium, Firefox and WebKit
 - Shared coloured `winston` logger with a configurable `LOG_LEVEL`
+- Per-environment config (`qa`, `staging`) selected with `TEST_ENV`, with `BASE_URL` kept in the env files
 - QA gate: TypeScript type-check, ESLint (Playwright rules) and Prettier
-- GitHub Actions CI with an HTML report per browser
+- GitHub Actions CI with an HTML report per browser and a manual environment picker
 
 ## Table of contents
 
@@ -66,6 +67,12 @@ npx playwright test --workers=1       # ordered log output
 npx playwright show-report            # open the last HTML report
 ```
 
+Run against another environment with `TEST_ENV` (see [Environments](#environments)):
+
+```bash
+TEST_ENV=staging npx playwright test
+```
+
 Log verbosity is controlled with `LOG_LEVEL`:
 
 ```bash
@@ -110,8 +117,11 @@ Then open `review.md` and press `Cmd+Shift+V` (`Ctrl+Shift+V` on Windows/Linux),
 .
 ├── .claude/skills/            # Claude Code project skills (verify-test-outcomes)
 ├── .github/workflows/ci.yml   # GitHub Actions: QA gate, then browser matrix
-├── env/.env.qa                # Environment variables (LOG_LEVEL)
-├── config/load-env.ts         # Loads env/.env.secrets and env/.env.qa (one place)
+├── env/                       # Environment files
+│   ├── .env.qa                #   BASE_URL, LOG_LEVEL (default environment)
+│   ├── .env.staging           #   Same keys for staging
+│   └── .env.secrets.example   #   Template for git-ignored credentials
+├── config/load-env.ts         # Loads env/.env.secrets and env/.env.<TEST_ENV> (one place)
 ├── logger/logger.ts           # Shared winston logger
 ├── pages/                     # Page objects (<name>.page.ts)
 │   ├── base.page.ts           #   Abstract BasePage with navigate()
@@ -137,10 +147,21 @@ Then open `review.md` and press `Cmd+Shift+V` (`Ctrl+Shift+V` on Windows/Linux),
 
 ## Configuration
 
-- **Base URL:** `https://demoblaze.com`, set in `playwright.config.ts`. Use relative paths such as `/index.html` in page objects.
+- **Base URL:** read from `BASE_URL` in the env file (`https://demoblaze.com` in `env/.env.qa`) and passed to `baseURL` in `playwright.config.ts`. The config throws if it is missing. Use relative paths such as `/index.html` in page objects.
 - **Browsers:** `chromium`, `firefox` and `webkit` projects. On CI the config uses 1 worker, 2 retries and fails on a stray `test.only`.
 - **Reports:** HTML report in `playwright-report/`, artifacts in `test-results/` (both git-ignored).
-- **Logging:** `LOG_LEVEL` is read from `env/.env.qa` (default `info`). A real environment variable overrides the file.
+- **Logging:** `LOG_LEVEL` is read from the env file (default `info`). A real environment variable overrides the file.
+
+### Environments
+
+`TEST_ENV` picks the env file, `env/.env.<TEST_ENV>`, and defaults to `qa`. Each file holds the non-secret settings for that environment (`BASE_URL`, `LOG_LEVEL`).
+
+```bash
+npx playwright test                    # qa (default)
+TEST_ENV=staging npx playwright test   # env/.env.staging
+```
+
+To add an environment, create `env/.env.<name>` with its own `BASE_URL`. If the file does not exist, or `BASE_URL` is empty, the run stops with an error rather than falling back to a default. A real environment variable such as `BASE_URL=... npx playwright test` overrides the file.
 
 ### Credentials and secrets
 
@@ -152,13 +173,13 @@ Login credentials are read from the environment in [`test-data/login-data.ts`](t
 | CI      | Add `TEST_USERNAME` and `TEST_PASSWORD` as GitHub repository secrets                   |
 | One-off | `TEST_USERNAME=... TEST_PASSWORD=... npx playwright test`                              |
 
-`env/.env.qa` is committed, so it holds only non-secret settings such as `LOG_LEVEL`. Real environment variables override the files.
+The `env/.env.<name>` files are committed, so they hold only non-secret settings such as `BASE_URL` and `LOG_LEVEL`. Real environment variables override the files.
 
 > **Demo-only fallback:** Demoblaze's public demo account (`test` / `test`) is used when `TEST_USERNAME` and `TEST_PASSWORD` are not set, so the repo runs out of the box. This is done for demo reasons only. In a real project there must be **no default credentials in code**: keep them in a secrets file or a secrets manager, and make the tests fail fast when they are missing.
 
 ## Continuous integration
 
-[`ci.yml`](.github/workflows/ci.yml) runs on pushes to `main`, pull requests and manual dispatch:
+[`ci.yml`](.github/workflows/ci.yml) runs on pushes to `main`, pull requests and manual dispatch. Pushes and pull requests test `qa`. To test another environment, open **Actions > CI > Run workflow** and pick it from the **Environment to test** dropdown (or run `gh workflow run ci.yml -f test_env=staging`).
 
 1. **`qa`** runs `npm run qa:check`.
 2. **`e2e`** runs only if `qa` passes. It runs the full suite once per browser (Chromium, Firefox, WebKit) in parallel and uploads each HTML report as an artifact.

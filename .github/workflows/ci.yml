@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      test_env:
+        description: Environment to test (loads env/.env.<value>)
+        type: choice
+        options: [qa, staging]
+        default: qa
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -45,6 +51,8 @@ jobs:
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }}
         env:
+          # push/PR runs have no input, so they default to qa.
+          TEST_ENV: ${{ inputs.test_env || 'qa' }}
           # Optional: if the secrets are not set these are empty and the
           # demo fallback in test-data/login-data.ts is used.
           TEST_USERNAME: ${{ secrets.TEST_USERNAME }}

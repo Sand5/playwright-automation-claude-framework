@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit -p .",
-    "format:check": "prettier --check tests pages logger test-data",
+    "format:check": "prettier --check tests pages logger test-data config playwright.config.ts",
     "qa:check": "npm run typecheck && npm run lint && npm run format:check",
     "review:tests": "claude -p \"/verify-test-outcomes\""
   },

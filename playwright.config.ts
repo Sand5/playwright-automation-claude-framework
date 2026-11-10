@@ -1,6 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import './config/load-env'; // loads env/.env.secrets and env/.env.qa
+import './config/load-env'; // must run first: BASE_URL below comes from env/.env.<TEST_ENV>
+
+const baseURL = process.env.BASE_URL;
+if (!baseURL) {
+  throw new Error(
+    `BASE_URL is not set (TEST_ENV=${process.env.TEST_ENV ?? 'qa'}). Add it to the env file.`,
+  );
+}
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -20,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'https://demoblaze.com',
+    baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
