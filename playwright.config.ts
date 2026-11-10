@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { cucumberReporter, defineBddConfig } from 'playwright-bdd';
 
 import './config/load-env'; // must run first: BASE_URL below comes from env/.env.<TEST_ENV>
 
@@ -9,11 +10,18 @@ if (!baseURL) {
   );
 }
 
+// playwright-bdd turns the .feature files into Playwright specs (run `bddgen`)
+// in .features-gen/, and returns that folder so it can be used as the testDir.
+const bddTestDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps: 'step-definitions/**/*.ts',
+});
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: bddTestDir,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -23,7 +31,12 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    // Cucumber JSON, turned into the multiple-cucumber-html-reporter report
+    // by `npm run report:cucumber`.
+    cucumberReporter('json', { outputFile: 'cucumber-report/cucumber.json' }),
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
